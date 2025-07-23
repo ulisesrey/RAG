@@ -26,7 +26,7 @@ def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=
     """
 
     # Load the data
-    loader = PyPDFLoader(path)
+    loader = PyPDFLoader(path, mode="single")
     documents = loader.load()
 
     # Split the documents
@@ -64,6 +64,8 @@ def save_vectors(texts, vectors, metadatas, embeddings, persist_directory):
     # Dont need db.persist() to save
     db.add_texts(texts=texts, metadatas=metadatas, embeddings=vectors)
 
+    return db
+
 
 if __name__ == "__main__":
     # Start timer
@@ -79,7 +81,7 @@ if __name__ == "__main__":
     logging.info(f"Created vector store in {time.time() - start:.2f} seconds.")
 
     persist_directory = "vector_store_recursive"
-    save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
+    db = save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
 
     logging.info(
         f"Created and saved Chroma vector store in {time.time() - start:.2f} seconds."
