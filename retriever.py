@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 embeddings = OllamaEmbeddings(model="mistral")
 
-db = Chroma(persist_directory="vector_store_short",
+db = Chroma(persist_directory="vector_stores/vector_store_short",
             embedding_function=embeddings)
 
 
