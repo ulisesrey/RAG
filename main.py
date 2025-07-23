@@ -22,12 +22,15 @@ logging.basicConfig(
 
 def load_and_clean_data(path):
     # Load the data
-    loader = PyPDFLoader(path, mode="single")#, pages_delimiter="\n\x0c")
+    loader = PyPDFLoader(path) #, mode="single")#, pages_delimiter="\n\x0c")
     documents = loader.load()
+    
     # Clean
-    # Replace "\n\x0c" for " "
     for doc in documents:
+        # Replace "\n\x0c" for " "
         doc.page_content = re.sub(r"\n\x0c", " ", doc.page_content)
+        # Replace \n not preceded OR followed by whitespace
+        doc.page_content = re.sub(r"(?<!\s)\n(?!\s)", " ", doc.page_content)
     # Replace 
     return documents
 
@@ -43,7 +46,7 @@ def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=
 
     # Split the documents
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size, chunk_overlap=chunk_overlap)#, separator="\n")
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap, keep_separator="end", separators=["\n", "."])
 
     split_documents = text_splitter.split_documents(documents=documents)
 
@@ -67,6 +70,13 @@ def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=
     return texts, vectors, metadatas
 
 
+def save_text(texts, filename="output_chunks.txt"):
+    with open(filename, "w", encoding="utf-8") as f:
+        for i, text in enumerate(texts, 1):
+            f.write(f"--- Chunk {i} ---\n")
+            f.write(text.strip() + "\n\n")  # Add spacing between chunks
+
+
 def save_vectors(texts, vectors, metadatas, embeddings, persist_directory):
     """
     Save the texts, vectors and medatada with Chroma
@@ -84,7 +94,7 @@ if __name__ == "__main__":
     start = time.time()
 
     path = "data/charles_darwin_origin_of_species_short.pdf"
-    persist_directory = "vector_store_short"
+    persist_directory = "vector_stores/vector_store_short"
     chunk_size, chunk_overlap = 2000, 100
     batch_size = 16
     embeddings = OllamaEmbeddings(model="mistral")
@@ -94,9 +104,10 @@ if __name__ == "__main__":
         path, chunk_size, chunk_overlap, embeddings, batch_size
     )
     logging.info(f"Created vector store in {time.time() - start:.2f} seconds...")
-    logging.info("...Now proceeding to save it...")
+    logging.info(f"...Now proceeding to save it in {persist_directory}...")
 
-    
+    save_text(texts, filename="vector_stores/texts.txt")
+
     db = save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
 
     logging.info(
