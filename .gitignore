@@ -208,3 +208,4 @@ __marimo__/
 .DS_Store
 vector_store_long/*
 vector_store/*
+vector_store_short/*
