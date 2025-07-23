@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_ollama import OllamaEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import CharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 import time
 import logging
@@ -30,13 +30,10 @@ def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=
     documents = loader.load()
 
     # Split the documents
-    text_splitter = CharacterTextSplitter(
-        chunk_size=chunk_size, chunk_overlap=chunk_overlap, separator="\n"
-    )
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap)#, separator="\n")
 
     split_documents = text_splitter.split_documents(documents=documents)
-
-    # embeddings = OllamaEmbeddings(model="mistral")
 
     # Batch embbedding
     batch_size = batch_size
@@ -63,7 +60,6 @@ def save_vectors(texts, vectors, metadatas, embeddings, persist_directory):
     Save the texts, vectors and medatada with Chroma
     """
     # Vector Store
-    # vector_store = InMemoryVectorStore(embeddings) For in memory (can't be saved)
     db = Chroma(embedding_function=embeddings, persist_directory=persist_directory)
     # Dont need db.persist() to save
     db.add_texts(texts=texts, metadatas=metadatas, embeddings=vectors)
@@ -73,7 +69,7 @@ if __name__ == "__main__":
     # Start timer
     start = time.time()
 
-    path = "data/charles_darwin_origin_of_species_short.pdf"
+    path = "data/charles_darwin_origin_of_species.pdf"
     chunk_size, chunk_overlap = 2000, 100
     batch_size = 16
     embeddings = OllamaEmbeddings(model="mistral")
@@ -82,7 +78,7 @@ if __name__ == "__main__":
     )
     logging.info(f"Created vector store in {time.time() - start:.2f} seconds.")
 
-    persist_directory = "vector_store_short"
+    persist_directory = "vector_store_recursive"
     save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
 
     logging.info(
