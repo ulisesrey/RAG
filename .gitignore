@@ -206,6 +206,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 .DS_Store
-vector_store_long/*
-vector_store/*
-vector_store_short/*
+
+# Vector stores
+vector_stores/*
+
