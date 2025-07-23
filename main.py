@@ -8,6 +8,7 @@ import time
 import logging
 from datetime import datetime
 from tqdm import tqdm
+import re
 
 # Set up logging
 log_id = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -19,15 +20,26 @@ logging.basicConfig(
     handlers=[logging.FileHandler(log_filename), logging.StreamHandler()],
 )
 
+def load_and_clean_data(path):
+    # Load the data
+    loader = PyPDFLoader(path, mode="single")#, pages_delimiter="\n\x0c")
+    documents = loader.load()
+    # Clean
+    # Replace "\n\x0c" for " "
+    for doc in documents:
+        doc.page_content = re.sub(r"\n\x0c", " ", doc.page_content)
+    # Replace 
+    return documents
+
+
 
 def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=16):
     """
     Vectorize the input pdf
     """
 
-    # Load the data
-    loader = PyPDFLoader(path, mode="single")
-    documents = loader.load()
+    documents = load_and_clean_data(path)
+
 
     # Split the documents
     text_splitter = RecursiveCharacterTextSplitter(
@@ -71,18 +83,22 @@ if __name__ == "__main__":
     # Start timer
     start = time.time()
 
-    path = "data/charles_darwin_origin_of_species.pdf"
+    path = "data/charles_darwin_origin_of_species_short.pdf"
+    persist_directory = "vector_store_short"
     chunk_size, chunk_overlap = 2000, 100
     batch_size = 16
     embeddings = OllamaEmbeddings(model="mistral")
+
+
     texts, vectors, metadatas = batch_vectorize_pdf(
         path, chunk_size, chunk_overlap, embeddings, batch_size
     )
-    logging.info(f"Created vector store in {time.time() - start:.2f} seconds.")
+    logging.info(f"Created vector store in {time.time() - start:.2f} seconds...")
+    logging.info("...Now proceeding to save it...")
 
-    persist_directory = "vector_store_recursive"
+    
     db = save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
 
     logging.info(
-        f"Created and saved Chroma vector store in {time.time() - start:.2f} seconds."
+        f"Saved Chroma vector store in {time.time() - start:.2f} seconds."
     )
