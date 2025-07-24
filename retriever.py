@@ -29,8 +29,8 @@ def deduplicate_documents(docs):
     return unique_docs
 
 
-query = "How many animals there are which will not breed"
-docs = db.similarity_search(query)
+query = "Which crop is the most ancient cultivated?"
+docs = db.similarity_search(query, k=2)
 unique_docs = deduplicate_documents(docs)
 
 # Option: test db.max_marginal_relevance_search(query, k=10, fetch_k=20)
@@ -38,3 +38,23 @@ unique_docs = deduplicate_documents(docs)
 for i, doc in enumerate(unique_docs):
     print(f"Document {i}:, {doc.page_content} \n")
     print(f"metadata is:{doc.metadata}\n\n")
+
+
+
+from langchain import hub
+
+# N.B. for non-US LangSmith endpoints, you may need to specify
+# api_url="https://api.smith.langchain.com" in hub.pull.
+prompt = hub.pull("rlm/rag-prompt")
+
+example_messages = prompt.invoke(
+    {"context": unique_docs, "question": query}
+).to_messages()
+
+assert len(example_messages) == 1
+print(example_messages[0].content)
+
+llm = ChatOllama(model="mistral", temperature=0.0) 
+
+response = llm.invoke(example_messages)
+print(response.content)
