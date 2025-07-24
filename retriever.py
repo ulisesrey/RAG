@@ -9,7 +9,7 @@ import time
 import logging
 from datetime import datetime
 from tqdm import tqdm
-
+from langchain import hub
 
 embeddings = OllamaEmbeddings(model="mistral")
 
@@ -32,29 +32,20 @@ def deduplicate_documents(docs):
 query = "Which crop is the most ancient cultivated?"
 docs = db.similarity_search(query, k=2)
 unique_docs = deduplicate_documents(docs)
-
 # Option: test db.max_marginal_relevance_search(query, k=10, fetch_k=20)
 
-for i, doc in enumerate(unique_docs):
-    print(f"Document {i}:, {doc.page_content} \n")
-    print(f"metadata is:{doc.metadata}\n\n")
+# Format documents with metadata
+context_text = "\n\n".join([
+    f"[Source: {doc.metadata.get('source', 'unknown')}] Page: {doc.metadata.get('page', 'unknown')}\n{doc.page_content.strip()}"
+    for doc in unique_docs
+])
 
-
-
-from langchain import hub
-
-# N.B. for non-US LangSmith endpoints, you may need to specify
-# api_url="https://api.smith.langchain.com" in hub.pull.
 prompt = hub.pull("rlm/rag-prompt")
+llm = ChatOllama(model="mistral", temperature=0.0) 
 
 example_messages = prompt.invoke(
-    {"context": unique_docs, "question": query}
+    {"context": context_text, "question": query}
 ).to_messages()
-
-assert len(example_messages) == 1
-print(example_messages[0].content)
-
-llm = ChatOllama(model="mistral", temperature=0.0) 
 
 response = llm.invoke(example_messages)
 print(response.content)
