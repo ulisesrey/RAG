@@ -9,6 +9,14 @@ import logging
 from datetime import datetime
 from tqdm import tqdm
 import re
+import yaml
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Load parameters from config.yaml
+with open("config.yaml") as f:
+    config = yaml.safe_load(f)
 
 # Set up logging
 log_id = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -33,7 +41,6 @@ def load_and_clean_data(path):
         doc.page_content = re.sub(r"(?<!\s)\n(?!\s)", " ", doc.page_content)
     # Replace 
     return documents
-
 
 
 def batch_vectorize_pdf(path, chunk_size, chunk_overlap, embeddings, batch_size=16):
@@ -93,11 +100,11 @@ if __name__ == "__main__":
     # Start timer
     start = time.time()
 
-    path = "data/charles_darwin_origin_of_species_short.pdf"
-    persist_directory = "vector_stores/vector_store_short"
-    chunk_size, chunk_overlap = 2000, 100
-    batch_size = 16
-    embeddings = OllamaEmbeddings(model="mistral")
+    path = config["pdf_path"]
+    persist_directory = config["persist_directory"]
+    chunk_size, chunk_overlap = config["chunk"]["size"], config["chunk"]["overlap"]
+    batch_size = config["batch_size"]
+    embeddings = OllamaEmbeddings(model=config["embedding_model"])
 
 
     texts, vectors, metadatas = batch_vectorize_pdf(
@@ -106,7 +113,7 @@ if __name__ == "__main__":
     logging.info(f"Created vector store in {time.time() - start:.2f} seconds...")
     logging.info(f"...Now proceeding to save it in {persist_directory}...")
 
-    save_text(texts, filename="vector_stores/texts.txt")
+    save_text(texts, filename="vector_stores/texts_long.txt")
 
     db = save_vectors(texts, vectors, metadatas, embeddings, persist_directory)
 

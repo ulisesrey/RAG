@@ -1,0 +1,11 @@
+# PDF path
+pdf_path: data/charles_darwin_origin_of_species.pdf
+# Persist directory
+persist_directory : vector_store/vector_store_test
+# Embedding model 
+embedding_model: nomic-embed-text:v1.5
+batch_size: 16
+# Chunk parameters
+chunk:
+  size: 3000
+  overlap: 100

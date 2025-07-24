@@ -10,10 +10,17 @@ import logging
 from datetime import datetime
 from tqdm import tqdm
 from langchain import hub
+import yaml
+from dotenv import load_dotenv
 
-embeddings = OllamaEmbeddings(model="mistral")
+load_dotenv()
+# Load parameters from config.yaml
+with open("config.yaml") as f:
+    config = yaml.safe_load(f)
 
-db = Chroma(persist_directory="vector_stores/vector_store_short",
+embeddings = OllamaEmbeddings(model=config["embedding_model"])
+
+db = Chroma(persist_directory="vector_store/vector_store_test",
             embedding_function=embeddings)
 
 
@@ -29,8 +36,13 @@ def deduplicate_documents(docs):
     return unique_docs
 
 
-query = "Which crop is the most ancient cultivated?"
-docs = db.similarity_search(query, k=2)
+query = "Which is our oldest cultivated plant?"
+retriever = db.as_retriever(
+    search_type="mmr",  # or "similarity"
+    search_kwargs={"k": 5, "fetch_k": 20}
+)
+
+docs = retriever.invoke(query)
 unique_docs = deduplicate_documents(docs)
 # Option: test db.max_marginal_relevance_search(query, k=10, fetch_k=20)
 
@@ -39,6 +51,8 @@ context_text = "\n\n".join([
     f"[Source: {doc.metadata.get('source', 'unknown')}] Page: {doc.metadata.get('page', 'unknown')}\n{doc.page_content.strip()}"
     for doc in unique_docs
 ])
+
+print(context_text)
 
 prompt = hub.pull("rlm/rag-prompt")
 llm = ChatOllama(model="mistral", temperature=0.0) 
