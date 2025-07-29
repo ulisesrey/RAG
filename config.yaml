@@ -1,7 +1,8 @@
 # PDF path
-pdf_path: data/charles_darwin_origin_of_species.pdf
+pdf_path: data/charles_darwin_origin_of_species_short.pdf
 # Persist directory
-persist_directory : vector_stores/vector_store_test
+persist_directory : vector_stores/vector_store_short_2907
+texts_filename: texts/texts.txt
 # Embedding model 
 embedding_model: nomic-embed-text:v1.5
 batch_size: 16
