@@ -1,16 +1,9 @@
-from langchain_ollama import ChatOllama
-from langchain_ollama import OllamaEmbeddings
-from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-import time
-import logging
-from datetime import datetime
 from tqdm import tqdm
 import re
-import yaml
-from dotenv import load_dotenv
+
 
 def load_and_clean_data(path):
     # Load the data
