@@ -1,3 +1,6 @@
+"""
+Util functions to generate the vector store
+"""
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
