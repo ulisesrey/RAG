@@ -29,11 +29,13 @@ def main():
 
     # Load variables from config
     path = config["pdf_path"]
-    persist_directory = config["persist_directory"]
-    texts_filename = config["texts_filename"]
+    model = config["embedding_model"]["name"]+":"+config["embedding_model"]["version"]
+
+    persist_directory = config["persist_directory"]+config["embedding_model"]["name"]
+    texts_filename = config["texts_filename"]+config["embedding_model"]["name"]
     chunk_size, chunk_overlap = config["chunk"]["size"], config["chunk"]["overlap"]
     batch_size = config["batch_size"]
-    embeddings = OllamaEmbeddings(model=config["embedding_model"])
+    embeddings = OllamaEmbeddings(model=model)
 
 
     texts, vectors, metadatas = batch_vectorize_pdf(

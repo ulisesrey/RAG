@@ -1,10 +1,15 @@
 # PDF path
-pdf_path: data/charles_darwin_origin_of_species_short.pdf
-# Persist directory
-persist_directory : vector_stores/vector_store_short_2907
-texts_filename: texts/texts.txt
+pdf_path: data/charles_darwin_origin_of_species.pdf
 # Embedding model 
-embedding_model: nomic-embed-text:v1.5
+embedding_model:
+  name: mxbai-embed-large
+  version: latest
+# Chat model
+chat_model: mistral
+# Persist directory
+persist_directory : vector_stores/vector_store
+texts_filename: texts/
+
 batch_size: 16
 # Chunk parameters
 chunk:

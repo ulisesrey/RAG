@@ -10,33 +10,28 @@ import logging
 from datetime import datetime
 from tqdm import tqdm
 from langchain import hub
-import yaml
 from dotenv import load_dotenv
+from utils.utils import load_config
+from utils.retriever import deduplicate_documents, format_sources
+
+
 
 load_dotenv()
 # Load parameters from config.yaml
-with open("config.yaml") as f:
-    config = yaml.safe_load(f)
+config = load_config()
 
-embeddings = OllamaEmbeddings(model=config["embedding_model"])
+model = config["embedding_model"]["name"]+":"+config["embedding_model"]["version"]
+embeddings = OllamaEmbeddings(model=model)
 
-db = Chroma(persist_directory="vector_store/vector_store_test",
+persist_directory = config["persist_directory"]+config["embedding_model"]["name"]
+
+db = Chroma(persist_directory=persist_directory,
             embedding_function=embeddings)
 
+# Check number of docs
+print("Docs stored:", db._collection.count())
 
-def deduplicate_documents(docs):
-    """deduplicate docs in case the similarity search returns more than once the same document"""
-    seen = set()
-    unique_docs = []
-    for doc in docs:
-        content = doc.page_content.strip()
-        if content not in seen:
-            seen.add(content)
-            unique_docs.append(doc)
-    return unique_docs
-
-
-query = "Which is our oldest cultivated plant?"
+query = input("Type your query:\n")#"Which is our oldest cultivated plant?"
 retriever = db.as_retriever(
     search_type="mmr",  # or "similarity"
     search_kwargs={"k": 5, "fetch_k": 20}
@@ -47,19 +42,16 @@ unique_docs = deduplicate_documents(docs)
 # Option: test db.max_marginal_relevance_search(query, k=10, fetch_k=20)
 
 # Format documents with metadata
-context_text = "\n\n".join([
-    f"[Source: {doc.metadata.get('source', 'unknown')}] Page: {doc.metadata.get('page', 'unknown')}\n{doc.page_content.strip()}"
-    for doc in unique_docs
-])
+context_text = format_sources(unique_docs)
 
 print(context_text)
 
 prompt = hub.pull("rlm/rag-prompt")
-llm = ChatOllama(model="mistral", temperature=0.0) 
+llm = ChatOllama(model=config["chat_model"], temperature=0.0) 
 
 example_messages = prompt.invoke(
     {"context": context_text, "question": query}
 ).to_messages()
 
 response = llm.invoke(example_messages)
-print(response.content)
+print(f"This is the answer:\n {response.content}")
