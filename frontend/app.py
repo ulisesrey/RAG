@@ -13,15 +13,16 @@ with open("config.yaml") as f:
 
 @st.cache_resource
 def load_vectorstore():
-    embeddings = OllamaEmbeddings(model=config["embedding_model"])
+    model=config["embedding_model"]["name"]+":"+config["embedding_model"]["version"]
+    embeddings = OllamaEmbeddings(model=model)
     return Chroma(
-        persist_directory=config["persist_directory"],
+        persist_directory = config["persist_directory"]+config["embedding_model"]["name"],
         embedding_function=embeddings
     )
 
 @st.cache_resource
 def load_llm():
-    return ChatOllama(model="mistral", temperature=0.0)
+    return ChatOllama(model=config["chat_model"], temperature=0.0)
 
 @st.cache_resource
 def load_prompt_template():
