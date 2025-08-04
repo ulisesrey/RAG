@@ -4,10 +4,9 @@ pdf_path: data/charles_darwin_origin_of_species.pdf
 embedding_model:
   name: mxbai-embed-large
   version: latest
-# Chat model
-chat_model: mistral
+
 # Persist directory
-persist_directory : vector_stores/vector_store
+persist_directory : vector_stores/
 texts_filename: texts/
 
 batch_size: 16
@@ -15,3 +14,6 @@ batch_size: 16
 chunk:
   size: 3000
   overlap: 100
+
+# Chat model
+chat_model: mistral
