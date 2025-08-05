@@ -27,6 +27,8 @@ Since LLMs can't have access to all the context, but we need the context to be a
 ## Installation
 Use the uv.lock and pyproject.toml files to install the environment.
 
+The code uses free LLMs and assumes that you have Ollama installed localy, if you have not follow their instructions to do so [here](https://ollama.com/). You can also modify the the code to use providers of paid LLMs.
+
 ## Generate the vector store
 Put your desired pdf document in the code repository and specify the path in the config.yaml file.
 Modify the other parameters in the config.yaml file according to your preferences.
