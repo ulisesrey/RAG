@@ -101,16 +101,19 @@ streamlit run frontend/app.py
 And follow the link, for example http://localhost:8501
 
 You should see something like this:
-![alt text](images/frontend_v1.png)
+<img src="images/frontend_v1.png" alt="alt text" width="600">
 
 You can ask a question, and the answer will be generated using RAG.
 In my example I used the book The origin of Species by Charles Darwin as a document to answer questions about the book.
-![alt text](images/question.png)
-After submitting the question it might take few seconds to provide the answer, since it needs to vectorize the question and retrieve the parts of the document that are more likely to contain the info.
+!<img src="images/question.png" alt="alt text" width="600">
+After submitting the question it might take few seconds to provide the answer, since it needs to vectorize the question, and retrieve the parts of the document that are more likely to contain the info.
 
-And this is the answer:
-![alt text](images/answer.png)
-By clicking on Retrieved Source Chuncks you can see the part of the original document that was used to answer the question.
+And this is the answer, complemented with the information (chunks) from the original document that was used to answer it, providing the source and the page where it is found:
+<img src="images/answer.png" alt="alt text" width="600">
+
+By clicking on each chunk we can see the text of each retrieved information:
+
+<img src="images/chunks.png" alt="alt text" width="600">
 
 ## Acknowledgments
-This RAG implementation is based on https://github.com/emarco177/documentation-helper/blob/2-retrieval-qa/ingestion.py by Eden Marco.
+This RAG implementation is based on [this repository](https://github.com/emarco177/documentation-helper/blob/2-retrieval-qa/ingestion.py) by Eden Marco.
