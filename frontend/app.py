@@ -28,7 +28,27 @@ def load_llm():
 def load_prompt_template():
     return hub.pull("rlm/rag-prompt")
 
-def format_sources(docs):
+def format_sources_for_display(docs):
+    """Formats each document for display in an expander, showing a preview."""
+    formatted_docs = []
+    for i, doc in enumerate(docs):
+        metadata = doc.metadata
+        source = metadata.get('source', 'unknown')
+        page = metadata.get('page', 'unknown')
+        content = doc.page_content.strip()
+        
+        # Create a short preview of the content
+        preview = content[:200] + "..." if len(content) > 200 else content
+
+        formatted_docs.append({
+            "title": f"**Source: {source}, Page: {page}**",
+            "preview": preview,
+            "full_content": content
+        })
+    return formatted_docs
+
+def format_sources_for_llm(docs):
+    """Formats the full content of all documents for the LLM context."""
     return "\n\n".join([
         f"**[Source: {doc.metadata.get('source', 'unknown')}, Page: {doc.metadata.get('page', 'unknown')}]**\n{doc.page_content.strip()}"
         for doc in docs
@@ -50,7 +70,8 @@ if query:
         )
         docs = retriever.get_relevant_documents(query)
 
-        context_text = format_sources(docs)
+        context_text = format_sources_for_llm(docs)
+        formatted_docs_for_display = format_sources_for_display(docs)
 
         llm = load_llm()
         prompt = load_prompt_template()
@@ -62,5 +83,8 @@ if query:
     st.success("Answer:")
     st.markdown(response.content)
 
-    with st.expander("📄 Retrieved Source Chunks"):
-        st.markdown(context_text)
+    # with st.expander("📄 Retrieved Source Chunks"):
+    #     st.markdown(context_text)
+    for doc in formatted_docs_for_display:
+        with st.expander(doc["title"]):
+            st.markdown(doc["full_content"])
