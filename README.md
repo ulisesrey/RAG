@@ -1,6 +1,8 @@
 # Retrieval-Augmented Generation (RAG)
 This is an implementation of Retrieval-Augmented Generation (RAG) to answer questions from a very long document using Large Language Models (LLMs).
 
+<!-- TOC -->
+
 ## Motivation
 LLMs have context memory limits, meaning they predict the next word based on an input, but the input has to be short enough to fit in the memory. Otherwise the LLMs will only use the last words of the input. In practice, this means that we can't use LLMs to answer questions from very large sources.
 Example of what an LLM can do:
@@ -26,7 +28,7 @@ Since LLMs can't have access to all the context, but we need the context to be a
 
 ## Installation
 
-The code uses free LLMs and assumes that you have Ollama installed localy, if you don't, then follow their instructions to do so [here](https://ollama.com/). You could also modify the code to use providers of paid LLMs.
+The code uses free LLMs and assumes that you have Ollama installed locally, if you don't, then follow their instructions to do so [here](https://ollama.com/). You could also modify the code to use providers of paid LLMs.
 
 ### 1. Clone the Repository
 
@@ -63,7 +65,7 @@ uv venv .venv
 
 This will create a .venv folder in your repository.
 
-Run uv sync to syncronize your environment with the pyproject.toml file
+Run uv sync to synchronize your environment with the pyproject.toml file
 ```shell
 uv sync
 ```
@@ -77,7 +79,7 @@ source .venv/bin/activate
 ```
 And then the code
 ```shell
-streamlit run fronentd/app.py
+streamlit run frontend/app.py
 ```
 
 ## Generate the vector store
@@ -105,7 +107,7 @@ You should see something like this:
 
 You can ask a question, and the answer will be generated using RAG.
 In my example I used the book The origin of Species by Charles Darwin as a document to answer questions about the book.
-!<img src="images/question.png" alt="alt text" width="600">
+<img src="images/question.png" alt="alt text" width="600">
 After submitting the question it might take few seconds to provide the answer, since it needs to vectorize the question, and retrieve the parts of the document that are more likely to contain the info.
 
 And this is the answer, complemented with the information (chunks) from the original document that was used to answer it, providing the source and the page where it is found:
