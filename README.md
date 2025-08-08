@@ -1,7 +1,17 @@
-# Retrieval-Augmented Generation (RAG)
+# Retrieval-Augmented Generation (RAG) <!-- omit in toc -->
 This is an implementation of Retrieval-Augmented Generation (RAG) to answer questions from a very long document using Large Language Models (LLMs).
 
-<!-- TOC -->
+## Table of Contents <!-- omit in toc -->
+- [Motivation](#motivation)
+- [RAG Concept](#rag-concept)
+- [Installation](#installation)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Create the Env](#2-create-the-env)
+- [Generate the vector store](#generate-the-vector-store)
+- [Ask questions](#ask-questions)
+- [Acknowledgments](#acknowledgments)
+
+
 
 ## Motivation
 LLMs have context memory limits, meaning they predict the next word based on an input, but the input has to be short enough to fit in the memory. Otherwise the LLMs will only use the last words of the input. In practice, this means that we can't use LLMs to answer questions from very large sources.
