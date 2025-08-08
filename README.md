@@ -28,10 +28,21 @@ Since LLMs can't have access to all the context, but we need the context to be a
 
 The code uses free LLMs and assumes that you have Ollama installed localy, if you don't, then follow their instructions to do so [here](https://ollama.com/). You could also modify the code to use providers of paid LLMs.
 
-1. Clone
-Clone the git repository into your folder of interest. Inside the repo there are two files that contain the information regarding the environment, uv.lock and pyproject.toml.
+### 1. Clone the Repository
 
-2. Create the Env
+Clone the Git repository into your folder of choice.
+
+This repo uses [`uv`](https://github.com/astral-sh/uv) as a Python environment and dependency manager. It includes:
+
+- `pyproject.toml` – project and dependency definitions
+- `uv.lock` – a lockfile with exact versions for reproducibility
+
+```bash
+git clone <your-repo-url> local_code/RAG
+cd local_code/RAG
+```
+
+### 2. Create the Env
 Use uv, the uv.lock and pyproject.toml files to install the environment.
 
 Make sure you have uv installed in your base env. If not do
