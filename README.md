@@ -25,9 +25,49 @@ Since LLMs can't have access to all the context, but we need the context to be a
 7. Now the LLMs can answer the question based on our retrieved information, which fit the context limits of our LLM.
 
 ## Installation
-Use the uv.lock and pyproject.toml files to install the environment.
 
-The code uses free LLMs and assumes that you have Ollama installed localy, if you have not follow their instructions to do so [here](https://ollama.com/). You can also modify the the code to use providers of paid LLMs.
+The code uses free LLMs and assumes that you have Ollama installed localy, if you don't, then follow their instructions to do so [here](https://ollama.com/). You could also modify the code to use providers of paid LLMs.
+
+1. Clone
+Clone the git repository into your folder of interest. Inside the repo there are two files that contain the information regarding the environment, uv.lock and pyproject.toml.
+
+2. Create the Env
+Use uv, the uv.lock and pyproject.toml files to install the environment.
+
+Make sure you have uv installed in your base env. If not do
+```shell
+pip install uv
+```
+
+
+Then, from the terminal go to the folder where you cloned the repository.
+For example:
+```shell
+cd local_code/RAG
+```
+Then create the env:
+```shell
+uv venv .venv
+```
+
+This will create a .venv folder in your repository.
+
+Run uv sync to syncronize your environment with the pyproject.toml file
+```shell
+uv sync
+```
+After that you can run your code like this:
+```shell
+uv run streamlit run frontend/app.py
+```
+Or you can first activate the env
+```shell
+source .venv/bin/activate
+```
+And then the code
+```shell
+streamlit run fronentd/app.py
+```
 
 ## Generate the vector store
 Put your desired pdf document in the code repository and specify the path in the config.yaml file.
