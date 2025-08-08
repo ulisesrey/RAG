@@ -29,20 +29,14 @@ def load_prompt_template():
     return hub.pull("rlm/rag-prompt")
 
 def format_sources_for_display(docs):
-    """Formats each document for display in an expander, showing a preview."""
+    """Formats each document's content for display."""
     formatted_docs = []
-    for i, doc in enumerate(docs):
-        metadata = doc.metadata
-        source = metadata.get('source', 'unknown')
-        page = metadata.get('page', 'unknown')
+    for doc in docs:
         content = doc.page_content.strip()
         
-        # Create a short preview of the content
-        preview = content[:200] + "..." if len(content) > 200 else content
-
         formatted_docs.append({
-            "title": f"**Source: {source}, Page: {page}**",
-            "preview": preview,
+            "source": doc.metadata.get('source', 'unknown'),
+            "page": doc.metadata.get('page', 'unknown'),
             "full_content": content
         })
     return formatted_docs
@@ -85,6 +79,15 @@ if query:
 
     # with st.expander("📄 Retrieved Source Chunks"):
     #     st.markdown(context_text)
-    for doc in formatted_docs_for_display:
-        with st.expander(doc["title"]):
+    st.markdown("---")
+    st.subheader("📄 Retrieved Source Chunks")
+    
+    # Iterate through the formatted documents with a counter
+    for i, doc in enumerate(formatted_docs_for_display):
+        # Create a title string for the expander header
+        # Using Markdown for simple formatting
+        expander_title = f"**Chunk {i+1}**  Source: **{doc['source']}** | Page: **{doc['page']}**"
+
+        with st.expander(expander_title):
+            # The full content goes inside the expander
             st.markdown(doc["full_content"])
