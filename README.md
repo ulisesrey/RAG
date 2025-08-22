@@ -1,5 +1,9 @@
 # Retrieval-Augmented Generation (RAG) <!-- omit in toc -->
-This is an implementation of Retrieval-Augmented Generation (RAG) to answer questions from a very long document using Large Language Models (LLMs).
+This is an implementation of Retrieval-Augmented Generation (RAG) to answer questions from a very long document using Large Language Models (LLMs). It can answer a question by analyzing very large documents. See this image for an example, where we asked the RAG to extract information from the Book "The Origin of Species" by Charles Darwin:
+
+<img src="images/answer.png" alt="alt text" width="600">
+
+
 
 ## Table of Contents <!-- omit in toc -->
 - [Motivation](#motivation)
@@ -118,6 +122,7 @@ You should see something like this:
 You can ask a question, and the answer will be generated using RAG.
 In my example I used the book The origin of Species by Charles Darwin as a document to answer questions about the book.
 <img src="images/question.png" alt="alt text" width="600">
+
 After submitting the question it might take few seconds to provide the answer, since it needs to vectorize the question, and retrieve the parts of the document that are more likely to contain the info.
 
 And this is the answer, complemented with the information (chunks) from the original document that was used to answer it, providing the source and the page where it is found:
